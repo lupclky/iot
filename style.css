@@ -1,0 +1,183 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f3f4f6;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.container {
+    width: 90%; /* Tăng chiều rộng container */
+    max-width: 1200px; /* Giới hạn độ rộng tối đa */
+    padding: 40px;
+    background-color: #fff;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    text-align: center;
+}
+
+h1, h2 {
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.input-group {
+    position: relative;
+    margin-bottom: 30px;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid #ddd;
+    outline: none;
+    transition: border-bottom 0.3s;
+}
+
+.input-group label {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    font-size: 16px;
+    color: #999;
+    pointer-events: none;
+    transition: top 0.3s, font-size 0.3s, color 0.3s;
+}
+
+.input-group input:focus ~ label,
+.input-group input:valid ~ label {
+    top: -18px;
+    font-size: 12px;
+    color: #3b82f6;
+}
+
+.input-group input:focus {
+    border-bottom: 2px solid #3b82f6;
+}
+
+.btn {
+    width: 100%;
+    padding: 10px;
+    background-color: #3b82f6;
+    border: none;
+    color: #fff;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.btn:hover {
+    background-color: #2563eb;
+}
+
+.row {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.column {
+    width: 48%; /* Giữ chiều rộng cho các cột để tạo cân bằng */
+    padding: 20px; /* Tăng khoảng cách padding cho các cột */
+    background-color: #e0f2ff;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.chart {
+    height: 300px; /* Tăng chiều cao của chart */
+    background-color: #f1f1f1;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+}
+
+.spo2-box {
+    font-size: 60px; /* Tăng kích thước font */
+    font-weight: bold;
+    color: orange;
+    margin: 20px 0;
+}
+
+.footer {
+    margin-top: 30px;
+    padding: 20px; /* Tăng padding cho phần footer */
+    background-color: #e0f2ff;
+    border-radius: 5px;
+}
+
+.footer button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 30px; /* Tăng chiều ngang của nút */
+    font-size: 18px; /* Tăng kích thước font */
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.footer button:hover {
+    background-color: #2563eb;
+}
+
+.sos-button, .send-alert {
+    background-color: #e74c3c;
+    color: white;
+    padding: 15px 30px; /* Tăng chiều ngang của nút SOS */
+    font-size: 18px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.sos-button:hover, .send-alert:hover {
+    background-color: #c0392b;
+}
+
+.heart-rate-section {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.heart-rate-box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 30px; /* Tăng kích thước font */
+    font-weight: bold;
+    color: #e74c3c;
+}
+
+.heart-icon {
+    width: 60px; /* Tăng kích thước icon trái tim */
+    height: 60px;
+    margin-right: 15px;
+}
+
+/* Định dạng phần chào mừng */
+.welcome {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.user-actions a {
+    margin-left: 15px;
+    text-decoration: none;
+    color: #3498db;
+}
+
+.user-actions a:hover {
+    text-decoration: underline;
+}
