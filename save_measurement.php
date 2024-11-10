@@ -1,43 +1,37 @@
 <?php
 session_start();
+if (!isset($_SESSION['username'])) {
+    header("Location: login.php");
+    exit();
+}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Lấy dữ liệu từ yêu cầu POST
-    $input = json_decode(file_get_contents('php://input'), true);
+    // Lấy dữ liệu từ form
+    $patient_id = $_POST['patient_id'];
+    $spo2 = $_POST['spo2'];
+    $heart_rate = $_POST['heart_rate'];
 
-    // Kiểm tra dữ liệu
-    if (!isset($input['patient_id']) || !isset($input['heart_rate']) || !isset($input['spo2'])) {
-        echo json_encode(['success' => false, 'message' => 'Dữ liệu không hợp lệ.']);
-        exit();
-    }
-
-    $patient_id = intval($input['patient_id']);
-    $heart_rate = intval($input['heart_rate']);
-    $spo2 = intval($input['spo2']);
-
-    // Kết nối tới cơ sở dữ liệu
+    // Kết nối cơ sở dữ liệu
     $conn = new mysqli("localhost:3307", "root", "", "health_monitoring");
 
     // Kiểm tra kết nối
     if ($conn->connect_error) {
-        echo json_encode(['success' => false, 'message' => 'Kết nối cơ sở dữ liệu thất bại.']);
-        exit();
+        die("Kết nối thất bại: " . $conn->connect_error);
     }
 
     // Lưu kết quả đo vào bảng measurements
-    $stmt = $conn->prepare("INSERT INTO measurements (patient_id, heart_rate, spo2) VALUES (?, ?, ?)");
-    $stmt->bind_param("iii", $patient_id, $heart_rate, $spo2);
+    $sql = "INSERT INTO measurements (patient_id, spo2, heart_rate, timestamp) VALUES (?, ?, ?, NOW())";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("idd", $patient_id, $spo2, $heart_rate);
 
     if ($stmt->execute()) {
-        echo json_encode(['success' => true, 'message' => 'Kết quả đo đã được lưu thành công.']);
+        echo "Kết quả đo đã được lưu thành công.";
     } else {
-        echo json_encode(['success' => false, 'message' => 'Lưu kết quả đo thất bại.']);
+        echo "Lỗi: " . $stmt->error;
     }
 
     // Đóng kết nối
     $stmt->close();
     $conn->close();
-} else {
-    echo json_encode(['success' => false, 'message' => 'Yêu cầu không hợp lệ.']);
 }
 ?>

@@ -92,7 +92,13 @@ $conn->close();
             <button class="open-records" onclick="window.location.href='patient_history.php'">Xem lịch sử đo</button> <!-- Thêm nút xem lịch sử -->
         </div>
     </div>
-    
+    <form action="save_measurement.php" method="POST">
+    <!-- Input ẩn để lưu patient_id, sẽ được lấy từ bác sĩ hoặc bệnh nhân -->
+        <input type="hidden" name="patient_id" id="patient_id" value="<?php echo $_SESSION['patient_id'] ?? ''; ?>">
+        <input type="hidden" name="spo2" id="spo2_input" value="">
+        <input type="hidden" name="heart_rate" id="heart_rate_input" value="">
+        <button type="submit" id="save-result" class="save-result" style="display:none;">Lưu kết quả</button>
+    </form>
 
     <script src="script.js"></script>
     <script>
@@ -121,38 +127,26 @@ $conn->close();
             }
         });
         function saveResult() {
-            const patientId = document.getElementById('patient').value;
+    // Lấy patient_id từ input hidden hoặc từ dropdown của bác sĩ
+            const patientId = document.getElementById('patient') 
+                            ? document.getElementById('patient').value 
+                            : document.getElementById('patient_id').value;
+
             const spo2 = document.getElementById('spo2-value').textContent;
             const heartRate = document.getElementById('heart-rate-value').textContent;
 
-            fetch('save_measurement.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    patient_id: patientId,
-                    spo2: spo2.replace(' %', ''), // Loại bỏ ký tự '%' trước khi gửi
-                    heart_rate: heartRate.replace(' bpm', '') // Loại bỏ ký tự 'bpm' trước khi gửi
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert('Kết quả đo đã được lưu thành công!');
-                } else {
-                    alert('Lưu kết quả đo thất bại: ' + data.message);
-                }
-            })
-            .catch(error => {
-                console.error('Lỗi khi lưu kết quả đo:', error);
-                alert('Đã xảy ra lỗi, không thể lưu kết quả đo.');
-            });
+            // Đặt giá trị vào các trường hidden
+            document.getElementById('patient_id').value = patientId;
+            document.getElementById('spo2_input').value = spo2.replace(' %', '');
+            document.getElementById('heart_rate_input').value = heartRate.replace(' bpm', '');
+
+            // Submit form
+            document.querySelector('form').submit();
         }
 
         // Hàm khởi động việc đo từ ESP32
         function startMeasurement() {
-            countdownTime = 30;
+            countdownTime = 5;
             document.getElementById('countdown').textContent = countdownTime;
 
             // Ẩn nút Lưu kết quả khi bắt đầu đo
