@@ -28,8 +28,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         // Kiểm tra mật khẩu
         if ($password == $row['password']) {
             $_SESSION['username'] = $username;
-                header("Location: dashboard.php");  // Trang của bác sĩ
+            $_SESSION['role'] = $row['role'];
             
+            // Chuyển hướng dựa trên vai trò của người dùng
+            if ($row['role'] == 1) {
+                header("Location: dashboard_1.php");  // Trang của bác sĩ
+            } else {
+                header("Location: dashboard_0.php");  // Trang của bệnh nhân
+            }
             exit();
         } else {
             echo "Sai mật khẩu!";
@@ -38,6 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         echo "Sai tên đăng nhập!";
     }
 }
+
 ?>
 
 <!DOCTYPE html>
@@ -46,7 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="login-container">

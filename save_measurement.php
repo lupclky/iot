@@ -1,25 +1,43 @@
 <?php
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $patient_id = $_POST['patient_id'];
-    $heart_rate = $_POST['heart_rate'];
-    $spo2 = $_POST['spo2'];
+session_start();
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Lấy dữ liệu từ yêu cầu POST
+    $input = json_decode(file_get_contents('php://input'), true);
+
+    // Kiểm tra dữ liệu
+    if (!isset($input['patient_id']) || !isset($input['heart_rate']) || !isset($input['spo2'])) {
+        echo json_encode(['success' => false, 'message' => 'Dữ liệu không hợp lệ.']);
+        exit();
+    }
+
+    $patient_id = intval($input['patient_id']);
+    $heart_rate = intval($input['heart_rate']);
+    $spo2 = intval($input['spo2']);
 
     // Kết nối tới cơ sở dữ liệu
     $conn = new mysqli("localhost:3307", "root", "", "health_monitoring");
 
     // Kiểm tra kết nối
     if ($conn->connect_error) {
-        die("Kết nối thất bại: " . $conn->connect_error);
+        echo json_encode(['success' => false, 'message' => 'Kết nối cơ sở dữ liệu thất bại.']);
+        exit();
     }
 
-    // Lưu dữ liệu đo vào cơ sở dữ liệu
-    $sql = "INSERT INTO patients_data (patient_id, heart_rate, spo2) VALUES ('$patient_id', '$heart_rate', '$spo2')";
+    // Lưu kết quả đo vào bảng measurements
+    $stmt = $conn->prepare("INSERT INTO measurements (patient_id, heart_rate, spo2) VALUES (?, ?, ?)");
+    $stmt->bind_param("iii", $patient_id, $heart_rate, $spo2);
 
-    if ($conn->query($sql) === TRUE) {
-        echo "Dữ liệu đã được lưu thành công!";
+    if ($stmt->execute()) {
+        echo json_encode(['success' => true, 'message' => 'Kết quả đo đã được lưu thành công.']);
     } else {
-        echo "Lỗi: " . $sql . "<br>" . $conn->error;
+        echo json_encode(['success' => false, 'message' => 'Lưu kết quả đo thất bại.']);
     }
 
+    // Đóng kết nối
+    $stmt->close();
     $conn->close();
+} else {
+    echo json_encode(['success' => false, 'message' => 'Yêu cầu không hợp lệ.']);
 }
+?>
