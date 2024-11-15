@@ -3,7 +3,7 @@ session_start();
 $host = "localhost:3307";
 $dbUsername = "root";
 $dbPassword = "";
-$dbName = "health_monitoring";
+$dbName = "iot";
 
 // Kết nối cơ sở dữ liệu
 $conn = new mysqli($host, $dbUsername, $dbPassword, $dbName);
@@ -29,9 +29,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if ($password == $row['password']) {
             $_SESSION['username'] = $username;
             $_SESSION['role'] = $row['role'];
+            $_SESSION['id'] = $row['id'];
             
             // Chuyển hướng dựa trên vai trò của người dùng
-            if ($row['role'] == 1) {
+            if ($row['role'] == 0) {
                 header("Location: dashboard_1.php");  // Trang của bác sĩ
             } else {
                 header("Location: dashboard_0.php");  // Trang của bệnh nhân

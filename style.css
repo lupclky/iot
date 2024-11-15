@@ -181,3 +181,58 @@ h1, h2 {
 .user-actions a:hover {
     text-decoration: underline;
 }
+.container {
+    width: 80%;
+    margin: 0 auto;
+}
+
+.history table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+}
+
+.history table th, .history table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+}
+
+.history table th {
+    background-color: #f2f2f2;
+}
+
+.footer {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.footer .btn {
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+}
+
+.footer .btn:hover {
+    background-color: #45a049;
+}
+.sos-section {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.sos-button {
+    padding: 10px 20px;
+    background-color: red;
+    color: white;
+    font-size: 18px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.sos-button:hover {
+    background-color: darkred;
+}
