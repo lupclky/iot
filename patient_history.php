@@ -38,6 +38,12 @@ $conn->close();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lịch sử đo của bệnh nhân</title>
     <link rel="stylesheet" href="style.css">
+    <script>
+        // Hàm để mở popup hiển thị lời khuyên
+        function showAdvice(advice) {
+            alert("Lời khuyên từ bác sĩ: " + advice);
+        }
+    </script>
 </head>
 <body>
     <div class="container">
@@ -49,6 +55,7 @@ $conn->close();
                         <th>Thời gian</th>
                         <th>Nhịp tim (bpm)</th>
                         <th>SpO2 (%)</th>
+                        <th>Lời khuyên</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -60,10 +67,11 @@ $conn->close();
                                     <td>" . $row['measurement_time'] . "</td>
                                     <td>" . $row['heart_rate'] . " bpm</td>
                                     <td>" . $row['spo2'] . " %</td>
+                                    <td><button onclick='showAdvice(\"" . addslashes($row['advice']) . "\")'>Xem lời khuyên</button></td>
                                   </tr>";
                         }
                     } else {
-                        echo "<tr><td colspan='3'>Không có lịch sử đo.</td></tr>";
+                        echo "<tr><td colspan='4'>Không có lịch sử đo.</td></tr>";
                     }
                     ?>
                 </tbody>

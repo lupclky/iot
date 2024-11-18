@@ -83,7 +83,7 @@ $conn->close();
         </div>
 
         <div class="footer">
-            <button id="save-result" class="save-result" style="display:none;" onclick="saveResult()">Lưu kết quả</button>
+            <button id="save-result" class="save-result">Lưu kết quả</button>
             <button class="open-records" onclick="window.location.href='patient_history.php'">Xem lịch sử đo</button>
         </div>
 
@@ -124,7 +124,7 @@ $conn->close();
         });
 
         function startMeasurement() {
-            countdownTime = 30;
+            countdownTime = 3;
             hasSaved = false;
             document.getElementById('countdown').textContent = countdownTime;
             document.getElementById('save-result').style.display = 'none';
@@ -178,20 +178,17 @@ $conn->close();
         }
 
         function checkDangerousHeartRate(heartRate, spo2) {
-            // Kiểm tra tình trạng SPO2
             const spo2Status = checkSpo2Status(spo2);
             document.getElementById('spo2-status').textContent = spo2Status.status;
             document.getElementById('spo2-status').style.color = spo2Status.color;
 
-            // Kiểm tra tình trạng nhịp tim
             const heartRateStatus = checkHeartRateStatus(heartRate);
             document.getElementById('heart-rate-status').textContent = heartRateStatus.status;
             document.getElementById('heart-rate-status').style.color = heartRateStatus.color;
 
-            // Kiểm tra tình trạng nguy hiểm cho nhịp tim và SPO2
             if (!hasSaved && (heartRateStatus.isDangerous || spo2Status.isDangerous)) {
                 hasSaved = true;
-                saveMeasurement();
+                saveMeasurement(true); // Lưu với SOS = 1 khi phát hiện nguy hiểm
                 document.getElementById('sos-section').style.display = 'block'; // Hiện nút SOS
             }
         }
@@ -233,10 +230,11 @@ $conn->close();
                 alert('Có lỗi xảy ra.');
             });
         }
-        function saveMeasurement() {
+        function saveMeasurement(isDangerous = false) {
             const patientId = document.getElementById('patient_id').value;
             const spo2 = document.getElementById('spo2-value').textContent.replace(' %', '');
             const heartRate = document.getElementById('heart-rate-value').textContent.replace(' bpm', '');
+            const sos = isDangerous ? 1 : 0; // SOS = 1 nếu nguy hiểm, ngược lại = 0
 
             // Gửi dữ liệu đến save_measurement.php qua AJAX
             fetch('save_measurement.php', {
@@ -245,17 +243,26 @@ $conn->close();
                 body: new URLSearchParams({
                     patient_id: patientId,
                     spo2: spo2,
-                    heart_rate: heartRate
+                    heart_rate: heartRate,
+                    sos: sos // Truyền giá trị SOS
                 })
             })
             .then(response => response.text())
             .then(data => {
                 console.log('Kết quả đo đã được lưu:', data);
+                alert('Kết quả đã được lưu thành công.');
             })
             .catch(error => {
                 console.error('Lỗi khi lưu kết quả:', error);
+                alert('Lỗi khi lưu kết quả.');
             });
         }
+
+        // Khi bấm nút lưu, giá trị sos = 0
+        document.getElementById('save-result').addEventListener('click', () => {
+            saveMeasurement(false); // Gọi lưu kết quả bình thường với SOS = 0
+        });
+
 
     </script>
 </body>
