@@ -51,6 +51,7 @@ $conn->close();
             <h2>Lịch sử đo</h2>
             <table>
                 <thead>
+                    
                     <tr>
                         <th>Thời gian</th>
                         <th>Nhịp tim (bpm)</th>

@@ -124,7 +124,7 @@ $conn->close();
         });
 
         function startMeasurement() {
-            countdownTime = 3;
+            countdownTime = 5;
             hasSaved = false;
             document.getElementById('countdown').textContent = countdownTime;
             document.getElementById('save-result').style.display = 'none';
@@ -148,7 +148,7 @@ $conn->close();
                 }
             }, 1000);
 
-            measureInterval = setInterval(fetchDataFromSensor, 1000);
+            measureInterval = setInterval(fetchDataFromSensor, 500);
         }
         
         function fetchDataFromSensor() {
@@ -157,7 +157,7 @@ $conn->close();
                 return;
             }
 
-            fetch('http://192.168.123.86/data')
+            fetch('http://172.20.10.13/data')
                 .then(response => response.json())
                 .then(data => {
                     if (data.spo2 !== undefined && data.heart_rate !== undefined) {
@@ -250,11 +250,11 @@ $conn->close();
             .then(response => response.text())
             .then(data => {
                 console.log('Kết quả đo đã được lưu:', data);
-                alert('Kết quả đã được lưu thành công.');
+            
             })
             .catch(error => {
                 console.error('Lỗi khi lưu kết quả:', error);
-                alert('Lỗi khi lưu kết quả.');
+                
             });
         }
 
