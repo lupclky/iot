@@ -63,22 +63,21 @@ $conn->close();
                     <canvas id="ecgChart"></canvas>
                 </div>
             </div>
-
-            <div class="column">
-                <h2>Nồng độ Oxy trong máu</h2>
-                <div class="spo2-box">
-                    <span id="spo2-value">Đang đo...</span>
-                    <span id="spo2-status" class="status-text"></span>  
-                </div>
-            </div>
         </div>
 
         <div class="heart-rate-section">
-            <h2>Nhịp tim (bpm)</h2>
-            <div class="heart-rate-box">
-                <img src="heart.png" alt="Heart Icon" class="heart-icon">
-                <span id="heart-rate-value">Đang đo...</span>
-                <span id="heart-rate-status" class="status-text"></span>
+            <div class="heart-rate-container">
+                <div class="heart-rate-box">
+                    <img src="heart.png" alt="Heart Icon" class="heart-icon">
+                    <span id="heart-rate-value">Đang đo...</span>
+                    <span id="heart-rate-status" class="status-text"></span>
+                </div>
+
+                <div class="spo2-box">
+                    <h2>Nồng độ Oxy trong máu</h2>
+                    <span id="spo2-value">Đang đo...</span>
+                    <span id="spo2-status" class="status-text"></span>
+                </div>
             </div>
         </div>
 
@@ -91,13 +90,7 @@ $conn->close();
             <button id="sos-button" class="sos-button" onclick="handleSOSClick()">SOS</button>
         </div>
     </div>
-    <form action="save_measurement.php" method="POST">
-        <!-- Input ẩn để lưu patient_id, sẽ được lấy từ bác sĩ hoặc bệnh nhân -->
-        <input type="hidden" name="patient_id" id="patient_id" value="<?php echo $_SESSION['id'] ?? ''; ?>">
-        <input type="hidden" name="spo2" id="spo2_input" value="">
-        <input type="hidden" name="heart_rate" id="heart_rate_input" value="">
-        <button type="submit" id="save-result" class="save-result" style="display:none;">Lưu kết quả</button>
-    </form>
+  
     <script>
         let countdownTime = 30;
         let countdownInterval, measureInterval;
