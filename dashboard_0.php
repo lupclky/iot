@@ -60,7 +60,7 @@ $conn->close();
             <div class="column">
                 <h2>Điện tâm đồ tim</h2>
                 <div class="chart">
-                    <canvas id="ecgChart"></canvas>
+                    <canvas id="ecgChart" width="full" height ="400"></canvas>
                 </div>
             </div>
         </div>
@@ -90,7 +90,13 @@ $conn->close();
             <button id="sos-button" class="sos-button" onclick="handleSOSClick()">SOS</button>
         </div>
     </div>
-  
+    <form action="save_measurement.php" method="POST">
+            <input type="hidden" name="patient_id" id="patient_id" value="<?php echo $_SESSION['patient_id'] ?? ''; ?>">
+            <input type="hidden" name="spo2" id="spo2_input" value="">
+            <input type="hidden" name="heart_rate" id="heart_rate_input" value="">
+            <button type="submit" id="save-result" class="save-result" style="display:none;">Lưu kết quả</button>
+        </form>
+        
     <script>
         let countdownTime = 30;
         let countdownInterval, measureInterval;
@@ -109,6 +115,8 @@ $conn->close();
                 }]
             },
             options: {
+                responsive: true, // Biểu đồ tự động thay đổi kích thước
+                maintainAspectRatio: false, 
                 scales: {
                     x: { title: { display: true, text: 'Thời gian (giây)' } },
                     y: { title: { display: true, text: 'Nhịp tim (bpm)' } }
@@ -117,7 +125,7 @@ $conn->close();
         });
 
         function startMeasurement() {
-            countdownTime = 5;
+            countdownTime =30;
             hasSaved = false;
             document.getElementById('countdown').textContent = countdownTime;
             document.getElementById('save-result').style.display = 'none';
@@ -143,14 +151,14 @@ $conn->close();
 
             measureInterval = setInterval(fetchDataFromSensor, 500);
         }
-        
+      
         function fetchDataFromSensor() {
             if (countdownTime <= 0) {
                 clearInterval(measureInterval);
                 return;
             }
 
-            fetch('http://172.20.10.13/data')
+            fetch('http://192.168.123.86/data')
                 .then(response => response.json())
                 .then(data => {
                     if (data.spo2 !== undefined && data.heart_rate !== undefined) {
@@ -158,6 +166,8 @@ $conn->close();
                         document.getElementById('heart-rate-value').textContent = `${data.heart_rate} bpm`;
                         updateECGChart(data.heart_rate);
                         checkDangerousHeartRate(data.heart_rate, data.spo2);
+                        console.log(data.heart_rate);
+                        console.log(data.spo2);
                     }
                 })
                 .catch(error => console.error('Error fetching sensor data:', error));

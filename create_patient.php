@@ -15,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $name = $_POST['name'];
     $phone = $_POST['phone'];
     $birthdate = $_POST['birthdate'];
-    $password = password_hash($_POST['password'], PASSWORD_BCRYPT);
+    $password = $_POST['password'];
 
     $sql = "INSERT INTO users (username, name, phone, birthdate, password, role) VALUES (?, ?, ?, ?, ?, 1)";
     $stmt = $conn->prepare($sql);
