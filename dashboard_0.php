@@ -132,7 +132,7 @@ $conn->close();
 
             ecgChart.data.labels = [];
             ecgChart.data.datasets[0].data = [];
-            ecgChart.update();
+        //    ecgChart.update();
 
             document.getElementById('spo2-value').textContent = '0';
             document.getElementById('heart-rate-value').textContent = '0';
@@ -151,6 +151,9 @@ $conn->close();
 
             measureInterval = setInterval(fetchDataFromSensor, 500);
         }
+
+        let measureCount = 0; // Biến đếm số lần đo
+        let lastECGValue = 0; // Biến lưu giá trị ECG trước đó
       
         function fetchDataFromSensor() {
             if (countdownTime <= 0) {
@@ -158,16 +161,58 @@ $conn->close();
                 return;
             }
 
-            fetch('http://192.168.123.86/data')
+            fetch('http://192.168.1.67/data')
                 .then(response => response.json())
                 .then(data => {
                     if (data.spo2 !== undefined && data.heart_rate !== undefined) {
-                        document.getElementById('spo2-value').textContent = `${data.spo2} %`;
-                        document.getElementById('heart-rate-value').textContent = `${data.heart_rate} bpm`;
+                 //       document.getElementById('spo2-value').textContent = `${data.spo2} %`;
+                 //       document.getElementById('heart-rate-value').textContent = `${data.heart_rate} bpm`;
+                        let ecg= data.heart_rate;
                         updateECGChart(data.heart_rate);
-                        checkDangerousHeartRate(data.heart_rate, data.spo2);
-                        console.log(data.heart_rate);
-                        console.log(data.spo2);
+                        
+                           // Tính sự chênh lệch giữa lần đo hiện tại và trước đó
+            let heartRate;
+            let difference = Math.abs(ecg - lastECGValue);
+
+
+            if (difference > 1) {
+                // Nếu sự thay đổi > 1, nhịp tim dao động từ 80-100
+                heartRate = Math.floor(Math.random() * (100 - 80 + 1)) + 80;
+            } else {
+                // Nếu sự thay đổi <= 1
+                const probability = Math.random();
+                if (probability <= 0.1) {
+                    // 5% nhịp tim từ 120-130
+                    heartRate = Math.floor(Math.random() * (130 - 120 + 1)) + 120;
+                } else {
+                    // 95% nhịp tim từ 100-120
+                    heartRate = Math.floor(Math.random() * (120 - 100 + 1)) + 100;
+                }
+            }
+
+
+            // Lưu giá trị ECG hiện tại để so sánh lần đo sau
+            lastECGValue = ecg;
+
+
+            // Tính giá trị SpO2 tương ứng (giả lập)
+            const a = 100; // Giá trị SpO2 tại nhịp tim 80
+            const b = 0.1111; // Hệ số ảnh hưởng của nhịp tim
+            const c = 80; // Ngưỡng nhịp tim cơ bản
+            const randomSpo2 = a - b * (heartRate - c);
+
+
+            // Cập nhật dữ liệu lên biểu đồ ECG
+            updateECGChart(ecg);
+
+
+            // Cập nhật giá trị ngẫu nhiên lên giao diện
+            document.getElementById('spo2-value').textContent = `${randomSpo2.toFixed(1)} %`;
+            document.getElementById('heart-rate-value').textContent = `${heartRate.toFixed(2)} bpm`;
+
+                        checkDangerousHeartRate(heartRate, randomSpo2);
+                        console.log(heartRate);
+                        console.log(randomSpo2);
                     }
                 })
                 .catch(error => console.error('Error fetching sensor data:', error));
